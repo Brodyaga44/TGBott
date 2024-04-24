@@ -14,7 +14,12 @@ public class Question {
         this.question = question;
         this.answer = answer;
     }
-    public void action(){
 
+    @Override
+    public String toString() {
+        return question;
     }
 }
+
+
+

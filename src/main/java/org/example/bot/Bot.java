@@ -4,131 +4,97 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
 
-    //вместо звездочек подставляйте свои данные
-
     final private String BOT_TOKEN = "7045050241:AAHzpd77h-oAWgyB6BbfPKdoNPX5JuxNyJI";
-
     final private String BOT_NAME = "Java_lab_zv_bot";
-
     Storage storage;
 
-
-
     public Bot() {
-
         storage = new Storage();
-
     }
 
-
-
     @Override
-
     public String getBotUsername() {
-
         return BOT_NAME;
-
     }
 
-
-
     @Override
-
     public String getBotToken() {
-
         return BOT_TOKEN;
-
     }
 
-
-
     @Override
-
     public void onUpdateReceived(Update update) {
-
-        try{
-
-            if(update.hasMessage() && update.getMessage().hasText())
-
-            {
-
-                //Извлекаем из объекта сообщение пользователя
-
+        try {
+            if (update.hasMessage() && update.getMessage().hasText()) {
                 Message inMess = update.getMessage();
-
-                //Достаем из inMess id чата пользователя
-
                 String chatId = inMess.getChatId().toString();
-
-                //Получаем текст сообщения пользователя, отправляем в написанный нами обработчик
-
                 String response = parseMessage(inMess.getText());
-
-                //Создаем объект класса SendMessage - наш будущий ответ пользователю
-
                 SendMessage outMess = new SendMessage();
-
-
-
-                //Добавляем в наше сообщение id чата а также наш ответ
-
+                if (inMess.getText().equals("/start")) {
+                    response = "Выберите режим";
+                    outMess.setReplyMarkup(createInlineKeyboard());
+                }
                 outMess.setChatId(chatId);
-
                 outMess.setText(response);
-
-
-
-                //Отправка в чат
-
                 execute(outMess);
-
             }
-
+            else if(update.hasCallbackQuery()){
+                String response = parseMessage(update.getCallbackQuery().getData());
+                SendMessage outMess = new SendMessage();
+                String chatId = update.getCallbackQuery().getMessage().getChatId().toString();
+                outMess.setChatId(chatId);
+                outMess.setText(response);
+                execute(outMess);
+            }
         } catch (TelegramApiException e) {
-
             e.printStackTrace();
-
         }
 
     }
 
     public String parseMessage(String textMsg) {
-
         String response;
-        String asking;
-
-
-
-        //Сравниваем текст пользователя с нашими командами, на основе этого формируем ответ
-
-        if(textMsg.equals("/start"))
-
-            response = "Привет";
-
-        else if(textMsg.equals("/get"))
-            response = storage.getRandQuote();
-        else if(textMsg.equals("/exam"))
-            response = storage.getRandQuote();
-        else if(textMsg.equals("/study"))
-
-            response = storage.getRandQuote();
-        else if(textMsg.equals("/learn")) {
-            response = storage.asking(0);
-            response = storage.array[0].answer;
+        if (textMsg.equals("/exam"))
+            response = "Это режим экзамена";
+        else if (textMsg.equals("/study"))
+            response = "Это режим обучения";
+        else if (textMsg.equals("/learn"))
+        {
+           // while(storage.getRandQuote().answer)
+           // {
+           //     response = "Ты ошибся номером друг";
+           // }
+            response = storage.getRandQuote().toString();
         }
 
         else
-
             response = "Сообщение не распознано";
-
-
-
         return response;
+    }
 
+    private InlineKeyboardMarkup createInlineKeyboard() {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+        List<InlineKeyboardButton> rowInline = new ArrayList<>();
+
+        rowInline.add(InlineKeyboardButton.builder().text("/exam").callbackData("/exam").build());
+        rowInline.add(InlineKeyboardButton.builder().text("/study").callbackData("/study").build());
+        rowInline.add(InlineKeyboardButton.builder().text("/learn").callbackData("/learn").build());
+
+        rowsInline.add(rowInline);
+        inlineKeyboardMarkup.setKeyboard(rowsInline);
+        return inlineKeyboardMarkup;
     }
 
 }
+
+
