@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Storage {
     Question[] array = {new Question("Вопрос 1 Варианты ответа: 1, 2, Ответ", "Ответ"),
-            new Question("Вопрос 2 Варианты ответа: 1, 2, Ответ", "2")
+                         new Question("Вопрос 2 Варианты ответа: 1, 2, Ответ", "2")
     };
     public Question getRandQuote() {
         Random random = new Random();

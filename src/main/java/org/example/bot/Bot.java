@@ -1,5 +1,6 @@
 package org.example.bot;
 
+import org.glassfish.jersey.server.model.Routed;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,6 +16,10 @@ public class Bot extends TelegramLongPollingBot {
 
     final private String BOT_TOKEN = "7045050241:AAHzpd77h-oAWgyB6BbfPKdoNPX5JuxNyJI";
     final private String BOT_NAME = "Java_lab_zv_bot";
+    boolean countLearn = false;
+
+    Question qest;
+    String btn;
     Storage storage;
 
     public Bot() {
@@ -63,19 +68,29 @@ public class Bot extends TelegramLongPollingBot {
 
     public String parseMessage(String textMsg) {
         String response;
-        if (textMsg.equals("/exam"))
+        if (textMsg.equals("/exam")) {
+            btn = "/exam";
             response = "Это режим экзамена";
-        else if (textMsg.equals("/study"))
+        }
+        else if (textMsg.equals("/study")) {
+            btn = "/study";
             response = "Это режим обучения";
+        }
         else if (textMsg.equals("/learn"))
         {
-           // while(storage.getRandQuote().answer)
-           // {
-           //     response = "Ты ошибся номером друг";
-           // }
-            response = storage.getRandQuote().toString();
+            btn = "/learn";
+            this.qest = storage.getRandQuote();
+            String quet = qest.question;
+            response = quet;
+        } else if (btn == "/learn") {
+            if (qest.answer.equals(textMsg)) {
+                response = "Ответ верный";
+                btn = "";
+            }
+            else {
+                response = "Ответ неверный";
+            }
         }
-
         else
             response = "Сообщение не распознано";
         return response;
