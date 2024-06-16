@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
 
-    final private String BOT_TOKEN = "7045050241:AAHzpd77h-oAWgyB6BbfPKdoNPX5JuxNyJI";
+    final private String BOT_TOKEN = "";
     final private String BOT_NAME = "Java_lab_zv_bot";
 
     String btn;
